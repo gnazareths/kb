@@ -2,7 +2,13 @@
 
 {% block content %}
 
-  <h1>This will be a kanban board</h1>
-  <p>Hold tight</p>
+  <h1>Hold tight, {{ current_user.username }}!</h1>
+  <p>This will be a lit Kanban Board</p>
+  <hr>
+  <!--
+  {% for board in boards %}
+  <p>{{ board.name }}</p>
+  {% endfor %}
+  -->
 
 {% endblock %}
