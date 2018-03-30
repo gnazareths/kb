@@ -1,5 +1,6 @@
-from app import db
+from app import db, login
 from datetime import datetime
+from flask_login import UserMixin
 
 boards = db.Table('boards',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
@@ -8,7 +9,7 @@ boards = db.Table('boards',
         primary_key=True)
 )
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), index=True, unique=True)
     password_hash = db.Column(db.String(256))
@@ -23,6 +24,10 @@ class User(db.Model):
         return '<{}; {}>'.format(self.name, self.email)
 
     ## should test this
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 class Board(db.Model):
     id = db.Column(db.Integer, primary_key=True)
