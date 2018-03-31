@@ -25,22 +25,11 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class TaskStatus(enum.Enum):
-    TODO = "To do"
-    DOING = "Doing"
-    DONE = "Done"
-
-class TaskCategory(enum.Enum):
-    WORK = "Work"
-    SCHOOL = "School"
-    PERSONAL = "Personal"
-
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(200))
-    status = db.Column(db.Enum(TaskStatus))
-    category = db.Column(db.Enum(TaskCategory))
+    status = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

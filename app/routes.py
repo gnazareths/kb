@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, TodoForm, DoingForm, DoneForm
+from app.forms import LoginForm, RegistrationForm, TaskForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Task
 
@@ -9,30 +9,31 @@ from app.models import User, Task
 @login_required
 def index():
     user_tasks = Task.query.filter_by(user_id=current_user.id)
-    todo = [i for i in user_tasks if i.status == TODO]
-    doing = [i for i in user_tasks if i.status == DOING]
-    done = [i for i in user_tasks if i.status == DONE]
-    todo_form = TodoForm()
-    doing_form = DoingForm()
-    done_form = DoneForm()
+    todo = [i for i in user_tasks if i.status == 1]
+    doing = [i for i in user_tasks if i.status == 2]
+    done = [i for i in user_tasks if i.status == 3]
+    todo_form, doing_form, done_form = TaskForm(), TaskForm(), TaskForm()
     if todo_form.validate_on_submit():
         task = Task(name=todo_form.name.data, description=todo_form.description.data,
-                    status=todo_form.status.data, category=todo_form.category.data,
-                    user_id=current_user.id)
+                    status=1, user_id=current_user.id)
         db.session.add(task)
         db.session.commit()
+        flash('Yay new challenge!')
+        return redirect(url_for('index'))
     if doing_form.validate_on_submit():
         task = Task(name=doing_form.name.data, description=doing_form.description.data,
-                    status=doing_form.status.data, category=doing_form.category.data,
-                    user_id=current_user.id)
+                    status=2, user_id=current_user.id)
         db.session.add(task)
         db.session.commit()
+        flash('Yay good luck!')
+        return redirect(url_for('index'))
     if done_form.validate_on_submit():
         task = Task(name=done_form.name.data, description=done_form.description.data,
-                    status=done_form.status.data, category=done_form.category.data,
-                    user_id=current_user.id)
+                    status=3, user_id=current_user.id)
         db.session.add(task)
         db.session.commit()
+        flash('Yay you did it!')
+        return redirect(url_for('index'))
     return render_template('index.html', all=user_tasks, todo_form=todo_form,
         doing_form=doing_form, done_form=done_form, todo=todo, doing=doing,
         done=done)  ## can define vars here
