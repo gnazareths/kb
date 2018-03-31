@@ -1,23 +1,16 @@
 from app import db, login
+import enum
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
-boards = db.Table('boards',
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
-        primary_key=True),
-    db.Column('board_id', db.Integer, db.ForeignKey('board.id'),
-        primary_key=True)
-)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), index=True, unique=True)
     password_hash = db.Column(db.String(256))
     name = db.Column(db.String(50))
-    boards = db.relationship('Board', secondary=boards,
-        lazy='subquery', backref=db.backref('pages', lazy=True)
-    )
+    tasks = db.relationship('Task',
+        lazy='dynamic', backref="user")
 
     def __repr__(self):
         return '<{}; {}>'.format(self.name, self.email)
@@ -32,11 +25,23 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return User.query.get(int(id))
 
-class Board(db.Model):
+class TaskStatus(enum.Enum):
+    TODO = "To do"
+    DOING = "Doing"
+    DONE = "Done"
+
+class TaskCategory(enum.Enum):
+    WORK = "Work"
+    SCHOOL = "School"
+    PERSONAL = "Personal"
+
+class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    description = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(200))
+    status = db.Column(db.Enum(TaskStatus))
+    category = db.Column(db.Enum(TaskCategory))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Board: {}>'.format(self.name)

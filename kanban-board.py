@@ -1,2 +1,2 @@
 from app import app, db
-from app.models import User, Board, boards
+from app.models import User, Task
