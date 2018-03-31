@@ -2,14 +2,21 @@
 
 {% block content %}
 
-  <h1>{{ current_user.id }}</h1>
-  <h1>{{ current_user.name }}</h1>
+  <h3>Hey, {{ current_user.name }}</h3>
+  <p>The lack of CSS is intentional.</p>
+  <hr>
 
    <div class="all-tasks">
      <div class="task-group">
        <h3>To do:</h3>
+       {% for i in todo %}
+       <p>
+         <b>{{ i.name }}</b><br>
+         {{ i.description }}
+       </p>
+       {% endfor %}
+       <p>Add new</p>
        <form action="" method="post">
-         <!-- what does this do? -->
          {{ todo_form.hidden_tag() }}
          <p>
            {{ todo_form.name.label }}<br>
@@ -31,23 +38,69 @@
          </p>
          <p>{{ todo_form.submit() }}</p>
      </div>
+     <hr>
      <div class="task-group">
        <h3>Doing:</h3>
+       {% for i in doing %}
+       <p>
+         <b>{{ i.name }}</b><br>
+         {{ i.description }}
+       </p>
+       {% endfor %}
+       <p>Add new</p>
+       <form action="" method="post">
+         {{ doing_form.hidden_tag() }}
+         <p>
+           {{ doing_form.name.label }}<br>
+           {{ doing_form.name(size=100) }}
+           {% for error in doing_form.name.errors %}
+           <span style="color: red;">
+             {{error}}
+           </span>
+           {% endfor %}
+         </p>
+         <p>
+           {{ doing_form.description.label }}<br>
+           {{ doing_form.description(size=200) }}
+           {% for error in doing_form.description.errors %}
+           <span style="color: red;">
+             {{error}}
+           </span>
+           {% endfor %}
+         </p>
+         <p>{{ doing_form.submit() }}</p>
      </div>
      <div class="task-group">
        <h3>Done:</h3>
+       {% for i in done %}
+       <p>
+         <b>{{ i.name }}</b><br>
+         {{ i.description }}
+       </p>
+       {% endfor %}
+       <p>Add new</p>
+       <form action="" method="post">
+         {{ done_form.hidden_tag() }}
+         <p>
+           {{ done_form.name.label }}<br>
+           {{ done_form.name(size=100) }}
+           {% for error in done_form.name.errors %}
+           <span style="color: red;">
+             {{error}}
+           </span>
+           {% endfor %}
+         </p>
+         <p>
+           {{ done_form.description.label }}<br>
+           {{ done_form.description(size=200) }}
+           {% for error in done_form.description.errors %}
+           <span style="color: red;">
+             {{error}}
+           </span>
+           {% endfor %}
+         </p>
+         <p>{{ done_form.submit() }}</p>
      </div>
    </div>
-
-   {% for i in all %}
-   <p>yo</p>
-   <h5>{{ i.name }}</h5>
-   {% endfor %}
-
-  <!--
-  {% for board in boards %}
-  <p>{{ board.name }}</p>
-  {% endfor %}
-  -->
 
 {% endblock %}
